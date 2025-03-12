@@ -1,7 +1,7 @@
 # ScrollViewX
 
 <video width="300" controls>
-  <source src="./screenshot/video.mov" type="video/mp4">
+  <source src="./screenshot/video.mp4" type="video/mp4">
 </video>
 
 SwiftUI's ScrollView is simple but doesn't support many useful events. It doesn’t provide methods to detect when scrolling starts, stops, or when the user interacts with it. This makes it hard to create animations that react to scrolling.
