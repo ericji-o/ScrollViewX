@@ -2,10 +2,10 @@ import SwiftUI
 
 struct ScrollViewX<Content: View>: UIViewRepresentable {
     let content: Content
-    let actionHandler: (Action) -> Void
+    let actionHandler: (ScrollViewXAction) -> Void
 
     init(
-        actionHandler: @escaping (Action) -> Void,
+        actionHandler: @escaping (ScrollViewXAction) -> Void,
         @ViewBuilder content: () -> Content
     ) {
         self.content = content()
@@ -19,7 +19,6 @@ struct ScrollViewX<Content: View>: UIViewRepresentable {
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
         scrollView.delegate = context.coordinator
-        scrollView.bounces = false
 
         let hostingController = ContentHostingController(
             rootView: content
@@ -42,15 +41,15 @@ struct ScrollViewX<Content: View>: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIScrollView, context: Context) {
         guard let hostingController = context.coordinator.hostingController else { return }
-        let newHeight = hostingController.updateHostingControllerHeight(for: uiView)
-        uiView.contentSize = CGSize(width: uiView.bounds.width, height: newHeight)
+        hostingController.rootView = content
+        hostingController.view.setNeedsLayout()
     }
 
     final class Coordinator: NSObject, UIScrollViewDelegate {
-        let actionHandler: (Action) -> Void
+        let actionHandler: (ScrollViewXAction) -> Void
         var hostingController: ContentHostingController?
 
-        init(actionHandler: @escaping (Action) -> Void) {
+        init(actionHandler: @escaping (ScrollViewXAction) -> Void) {
             self.actionHandler = actionHandler
         }
 
@@ -98,18 +97,15 @@ struct ScrollViewX<Content: View>: UIViewRepresentable {
         func updateHostingControllerHeight(for scrollView: UIScrollView) -> CGFloat {
             let targetSize = CGSize(width: scrollView.bounds.width, height: CGFloat.greatestFiniteMagnitude)
             let newSize = sizeThatFits(in: targetSize)
-
             view.frame.size.height = newSize.height
             return newSize.height
         }
     }
 }
 
-extension ScrollViewX {
-    public enum Action {
-        case didScroll(scrollView: UIScrollView, isUserAction: Bool)
-        case didEndDecelerating(scrollView: UIScrollView)
-        case didEndDragging(scrollView: UIScrollView)
-    }
+public enum ScrollViewXAction {
+    // add more delegate methods here
+    case didScroll(scrollView: UIScrollView, isUserAction: Bool)
+    case didEndDecelerating(scrollView: UIScrollView)
+    case didEndDragging(scrollView: UIScrollView)
 }
-

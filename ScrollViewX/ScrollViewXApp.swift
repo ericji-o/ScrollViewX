@@ -4,7 +4,7 @@ import SwiftUI
 struct ScrollViewXApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ExampleUI()
         }
     }
 }
